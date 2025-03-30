@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pygame with Mouse</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { background: #000; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="1600" height="900"></canvas>
+    <script>
+        var socket = io();
+        var canvas = document.getElementById('gameCanvas');
+        var ctx = canvas.getContext('2d');
+        var WIDTH = 1600;
+        var HEIGHT = 900;
+
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        canvas.addEventListener('mousemove', function(event) {
+            var rect = canvas.getBoundingClientRect();
+            var mouseX = event.clientX - rect.left;
+            var mouseY = event.clientY - rect.top;
+
+            socket.emit('mouse_event', JSON.stringify({ mouse_x: mouseX, mouse_y: mouseY }));
+        });
+
+        socket.on('game_state', function(gameState) {
+            // Clear the canvas
+            ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+            // Draw the player
+            ctx.fillStyle = 'red';
+            ctx.fillRect(gameState.player_x, gameState.player_y, 30, 30);
+
+            //Draw Enemies
+            ctx.fillStyle = 'green';
+            gameState.enemies.forEach(function(enemy) {
+                ctx.fillRect(enemy[0], enemy[1], 30, 30)
+            });
+
+             //Draw platforms
+            ctx.fillStyle = 'black';
+            gameState.platforms.forEach(function(platform) {
+                ctx.fillRect(platform[0], platform[1], platform[2], platform[3])
+            });
+
+            //Draw Coins
+            ctx.fillStyle = 'yellow';
+            gameState.coins.forEach(function(coin) {
+                ctx.fillRect(coin[0], coin[1], 15, 15);
+            });
+
+            //Add code to draw the door, background, score, and other game elements based on gameState
+        });
+    </script>
+</body>
+</html>

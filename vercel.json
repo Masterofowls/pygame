@@ -1,0 +1,18 @@
+{
+    "version": 2,
+    "rewrites": [
+      { "source": "/(.*)", "destination": "/index.html" }
+    ],
+    "headers": [
+      {
+        "source": "/(.*)",
+        "headers": [
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'self' https://pyscript.net; script-src 'self' https://pyscript.net 'unsafe-inline'; style-src 'self' https://pyscript.net 'unsafe-inline';"
+          }
+        ]
+      }
+    ]
+  }
+  
